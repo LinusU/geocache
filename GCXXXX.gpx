@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<gpx xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="1.0" creator="DevTek.org GPX Generator http://www.devtek.org/software/gpx_gen/" xsi:schemaLocation="http://www.topografix.com/GPX/1/0 http://www.topografix.com/GPX/1/0/gpx.xsd http://www.groundspeak.com/cache/1/0 http://www.groundspeak.com/cache/1/0/cache.xsd http://www.gsak.net/xmlv1 http://www.gsak.net/xmlv1/GSAKv1.xsd" xmlns="http://www.topografix.com/GPX/1/0">
+ <desc>GPX file for user supplied waypoint data</desc>
+ <author>DevTek.org GPX Generator</author>
+ <copyright>DevTek GPX_Gen output is covered under the GFDL and may be freely distributed. See http://www.gnu.org/copyleft/fdl.html</copyright>
+ <time>2010-05-02T06:01:26-06:00</time>
+ <keywords>devtek, pcwize</keywords>
+ <bounds minlat="59.66605" minlon="-16.4818" maxlat="59.66605" maxlon="-16.4818" />
+ <wpt lat="59.66605" lon="-16.4818">
+  <time>2010-05-02T00:00:00-06:00</time>
+  <ele></ele>
+  <name>GCXXXX</name>
+  <cmt>This is a comment</cmt>
+  <desc>Where Penguins Fly by SpaceStationOwner (1/5)</desc>
+  <url>http://www.geocaching.com/GCXXXX</url>
+  <urlname>Where Penguins Fly by SpaceStationOwner</urlname>
+  <sym>Geocache</sym>
+  <type>Geocache|Traditional Cache</type>
+  <groundspeak:cache id="GCQQQQ" available="True" archived="False" xmlns:groundspeak="http://www.groundspeak.com/cache/1/0">
+   <groundspeak:name>Where Penguins Fly</groundspeak:name>
+   <groundspeak:placed_by>SpaceStationOwner</groundspeak:placed_by>
+   <groundspeak:owner id="???">SpaceStationOwner</groundspeak:owner>
+   <groundspeak:type>Traditional Cache</groundspeak:type>
+   <groundspeak:container>Regular</groundspeak:container>
+   <groundspeak:difficulty>1</groundspeak:difficulty>
+   <groundspeak:terrain>5</groundspeak:terrain>
+   <groundspeak:country>SWEDEN</groundspeak:country>
+   <groundspeak:state></groundspeak:state>
+   <groundspeak:short_description html="False">This is the Synopsis...</groundspeak:short_description>
+   <groundspeak:long_description html="False">This is the details...</groundspeak:long_description>
+   <groundspeak:encoded_hints>This is a hint</groundspeak:encoded_hints>
+  </groundspeak:cache>
+ </wpt>
+</gpx>
