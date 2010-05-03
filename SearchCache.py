@@ -6,11 +6,12 @@
 
 from re import compile
 from HTMLParser import HTMLParser, HTMLParseError
+from htmlentitydefs import name2codepoint
 
 WptType = compile("/images/WptTypes/([0-9])\.gif")
 DifficultyTerrain = compile("\(([1-5]\.?5?)/([1-5]\.?5?)\)")
 Date = compile("([0-9]{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]{2})")
-By = compile("by (.*) \((GC[0-9A-Z]{4})\)")
+By = compile("by (.*) \((GC[0-9A-Z]{4,6})\)")
 
 def month2dec(month):
     if month == "Jan": return 1
@@ -40,6 +41,8 @@ class SearchCache(HTMLParser):
         self.fill = None
         self.next = None
         
+        self.data = unicode("")
+        
     
     def new_item(self):
         
@@ -53,7 +56,7 @@ class SearchCache(HTMLParser):
             'terrain': '',
             'country': '',
             'state': '',
-            'date': (1970, 1, 1)
+            'date': None
         }
         
     
@@ -89,6 +92,8 @@ class SearchCache(HTMLParser):
         
     
     def handle_starttag(self, tag, attrs):
+        
+        self.process_data()
         
         attrs = dict(attrs)
         
@@ -134,6 +139,8 @@ class SearchCache(HTMLParser):
     
     def handle_endtag(self, tag):
         
+        self.process_data()
+        
         if(
             self.item is not None and
             self.fill is not None and
@@ -147,18 +154,54 @@ class SearchCache(HTMLParser):
     
     def handle_data(self, data):
         
+        self.data += unicode(data)
+        
+    
+    def handle_charref(self, name):
+        
+        self.data += unichr(int(name))
+        
+    
+    def handle_entityref(self, name):
+        
+        if name in name2codepoint:
+            self.data += unichr(name2codepoint[name])
+        else:
+            self.data += u"?"
+        
+    
+    def process_data(self):
+        
         if self.item is None:
             return
         
-        #FIXME: do the below with Regex
+        self.data = self.data.strip()
         
-        data = data.strip()
-        data = data.replace("\r", "")
-        data = data.replace("\n", " ")
-        data = data.replace("  ", " ")
+        if len(self.data) == 0:
+            return
+        
+        data = unicode("")
+        space = False
+        
+        for c in self.data:
+            if c == "\n":
+                if not space:
+                    data += u" "
+                    space = True
+            elif c == "\r":
+                pass
+            elif c == " ":
+                if not space:
+                    data += u" "
+                    space = True
+            else:
+                data += c
+                space = False
+        
+        self.data = unicode("")
         
         if self.fill is not None and self.item is not None:
-            self.item[self.fill] += data
+            self.item[self.fill] = data
         
         re = DifficultyTerrain.search(data)
         
@@ -166,7 +209,7 @@ class SearchCache(HTMLParser):
             self.item['difficulty'] = re.group(1)
             self.item['terrain'] = re.group(2)
         
-        if not self.item.has_key('date'):
+        if self.item['date'] is None:
             
             re = Date.search(data)
             
@@ -180,11 +223,5 @@ class SearchCache(HTMLParser):
             self.item['creator'] = re.group(1)
             self.item['id'] = re.group(2)
             self.fill = "state"
-        
-    
-    def handle_charref(self, name):
-        
-        if self.fill is not None and self.item is not None:
-            self.item[self.fill] += unichr(int(name))
         
     
