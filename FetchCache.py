@@ -5,6 +5,7 @@
 #
 
 from Login import Login
+from FetchHTML import FetchHTML
 
 from urllib import urlencode
 from urllib2 import urlopen
@@ -15,6 +16,7 @@ from os.path import isdir
 p = OptionParser(version=0.2)
 
 p.add_option("-o", "--output", dest="output", help="Fetch the caches to DIR", metavar="DIR", default="./")
+p.add_option("-i", "--html", dest="html", help="Fetch the caches info as html to DIR", metavar="DIR", default=None)
 
 options, args = p.parse_args()
 
@@ -23,7 +25,17 @@ if options.output[-1] != "/":
 
 if not isdir(options.output):
     print "Output directory doesn't exists"
-    quit()
+    quit(1)
+
+if options.html is not None:
+    
+    if options.html[-1] != "/":
+        optins.html += "/"
+
+    if not isdir(options.html):
+        print "HTML directory doesn't exists"
+        quit(2)
+    
 
 l = Login()
 
@@ -31,6 +43,9 @@ for gc in args:
     
     if gc[:2] != "GC":
         continue
+    
+    if options.html is not None:
+        FetchHTML(l, gc, options.html)
     
     r = l.Request(
         "http://www.geocaching.com/seek/cache_details.aspx?wp=%s" % (gc,),
