@@ -80,7 +80,7 @@ def link(match, login, gc, output):
     else:
         url = "http://www.geocaching.com/seek/%s" % (match.group(1), )
     
-    return match.group(0)[:match.start(1)] + url + match.group(0)[match.end(1):]
+    return match.group(0)[:match.start(1)-match.start(0)] + url + match.group(0)[match.end(1)-match.end(0):]
     
 
 def FetchHTML(login, gc, output):
@@ -101,6 +101,9 @@ def FetchHTML(login, gc, output):
         
         f.write(line)
         
+    
+    u.close()
+    f.close()
     
     return True
     
