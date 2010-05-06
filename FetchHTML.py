@@ -93,6 +93,15 @@ def FetchHTML(login, gc, output):
     u = login.urlopen("http://www.geocaching.com/seek/cdpf.aspx?guid=%s&lc=10" % (guid, ))
     f = open("%s%s.html" % (output, gc), 'w')
     
+    line = u.readline()
+    
+    if line[0] in ("\r", "\n"):
+        line = '<?xml version="1.0" encoding="utf-8" ?>' + line
+    elif line[0:9] == "<!DOCTYPE":
+        line = '<?xml version="1.0" encoding="utf-8" ?>' + "\n" + line
+    
+    f.write(line)
+    
     for line in u:
         
         line = SCRIPTS.sub('', line)
