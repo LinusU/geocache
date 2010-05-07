@@ -4,10 +4,10 @@
 # © Linus Unnebäck
 #
 
-from Login import Login
+from GeoCaching import GeoCaching
+
 from GeoForm import GeoForm
 from GeoResult import GeoResult
-from SearchCache import SearchCache
 
 from gtk import main, main_quit
 from gtk import Window, VBox
@@ -24,17 +24,17 @@ class Search(VBox):
         self.pack_start(self.form, False)
         self.pack_start(self.result)
         
-        self.login = Login()
-        self.search = SearchCache(self.login)
+        self.login = GeoCaching()
+        self.search = None
         
         self.form.connect('search', self.do_search)
         
     
     def do_search(self, widget, lat, long):
         
-        res = self.search.search_lat_long(lat, long)
+        self.search = self.login.search_lat_long(lat, long)
         
-        for row in res:
+        for row in self.search.results:
             self.result.add_cache(row)
         
         self.result.show_all()

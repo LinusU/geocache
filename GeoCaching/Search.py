@@ -7,13 +7,14 @@
 from re import compile
 from HTMLParser import HTMLParser, HTMLParseError
 from htmlentitydefs import name2codepoint
+from datetime import date
 
 WptType = compile("/images/WptTypes/([0-9])\.gif")
 DifficultyTerrain = compile("\(([1-5]\.?5?)/([1-5]\.?5?)\)")
 Date = compile("([0-9]{1,2}) (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) ([0-9]{2})")
 By = compile("by (.*) \((GC[0-9A-Z]{4,6})\)")
 
-def month2dec(month):
+def month2int(month):
     if month == "Jan": return 1
     elif month == "Feb": return 2
     elif month == "Mar": return 3
@@ -27,7 +28,7 @@ def month2dec(month):
     elif month == "Nov": return 11
     elif month == "Dec": return 12
 
-class SearchCache(HTMLParser):
+class Search(HTMLParser):
     
     def __init__(self, login):
         
@@ -56,7 +57,7 @@ class SearchCache(HTMLParser):
             'terrain': '',
             'country': '',
             'state': '',
-            'date': None
+            'date': date(1970, 1, 1)
         }
         
     
@@ -78,7 +79,7 @@ class SearchCache(HTMLParser):
         try: self.close()
         except HTMLParseError: pass
         
-        return self.results
+        return True
         
     
     def close(self):
@@ -153,14 +154,10 @@ class SearchCache(HTMLParser):
         
     
     def handle_data(self, data):
-        
         self.data += unicode(data)
-        
     
     def handle_charref(self, name):
-        
         self.data += unichr(int(name))
-        
     
     def handle_entityref(self, name):
         
@@ -214,7 +211,11 @@ class SearchCache(HTMLParser):
             re = Date.search(data)
             
             if re:
-                self.item['date'] = (re.group(3), month2dec(re.group(2)), re.group(1))
+                self.item['date'] = date(
+                    int(re.group(3)),
+                    month2int(re.group(2)),
+                    int(re.group(1))
+                )
             
         
         re = By.search(data)

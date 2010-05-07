@@ -15,25 +15,9 @@ SCRIPTS = compile('<script[^>]*></script>')
 IMAGES = compile('<img[^>]*src="([^"]+)"[^>]*>')
 LINKS = compile('<a[^>]*href="([^"]+)"[^>]*>')
 
-def get_guid(login, gc):
+def script(match, login, gc, output):
     
-    u = login.urlopen("http://www.geocaching.com/seek/cache_details.aspx?wp=%s" % (gc, ))
-    
-    s1 = u.read(1024)
-    s2 = u.read(1024)
-    
-    while len(s1) + len(s2) != 0:
-        
-        re = GUID.search(s1 + s2)
-        
-        if re:
-            return re.group(1)
-        
-        s1 = s2
-        s2 = u.read(1024)
-        
-    
-    return False
+    return ''
     
 
 def image(match, login, gc, output):
@@ -81,38 +65,4 @@ def link(match, login, gc, output):
         url = "http://www.geocaching.com/seek/%s" % (match.group(1), )
     
     return match.group(0)[:match.start(1)-match.start(0)] + url + match.group(0)[match.end(1)-match.end(0):]
-    
-
-def FetchHTML(login, gc, output):
-    
-    guid = get_guid(login, gc)
-    
-    if guid is False:
-        return False
-    
-    u = login.urlopen("http://www.geocaching.com/seek/cdpf.aspx?guid=%s&lc=10" % (guid, ))
-    f = open("%s%s.html" % (output, gc), 'w')
-    
-    line = u.readline()
-    
-    if line[0] in ("\r", "\n"):
-        line = '<?xml version="1.0" encoding="utf-8" ?>' + line
-    elif line[0:9] == "<!DOCTYPE":
-        line = '<?xml version="1.0" encoding="utf-8" ?>' + "\n" + line
-    
-    f.write(line)
-    
-    for line in u:
-        
-        line = SCRIPTS.sub('', line)
-        line = IMAGES.sub(lambda m: image(m, login, gc, output), line)
-        line = LINKS.sub(lambda m: link(m, login, gc, output), line)
-        
-        f.write(line)
-        
-    
-    u.close()
-    f.close()
-    
-    return True
     

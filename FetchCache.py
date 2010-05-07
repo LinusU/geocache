@@ -4,11 +4,7 @@
 # © Linus Unnebäck
 #
 
-from Login import Login
-from FetchHTML import FetchHTML
-
-from urllib import urlencode
-from urllib2 import urlopen
+from GeoCaching import GeoCaching
 
 from optparse import OptionParser
 from os.path import isdir
@@ -42,7 +38,7 @@ if options.html is not None:
         quit(2)
     
 
-l = Login()
+g = GeoCaching()
 
 for gc in args:
     
@@ -50,27 +46,7 @@ for gc in args:
         continue
     
     if options.html is not None:
-        FetchHTML(l, gc, options.html)
+        g.fetch_html(options.html, gc)
     
-    r = l.Request(
-        "http://www.geocaching.com/seek/cache_details.aspx?wp=%s" % (gc,),
-        urlencode({
-            '__EVENTTARGET': '',
-            '__EVENTARGUMENT': '',
-            '__VIEWSTATE': '',
-            'ctl00$ContentBody$btnLocDL': 'LOC Waypoint File'
-        })
-    )
-    
-    u = urlopen(r)
-    f = open("%s%s.loc" % (options.output, gc), 'w')
-    
-    s = u.read(1024)
-    
-    while len(s) > 0:
-        f.write(s)
-        s = u.read(1024)
-    
-    u.close()
-    f.close()
+    g.fetch_loc(options.output, gc)
     
