@@ -23,7 +23,7 @@ if options.device is not None:
     if not isdir(options.html): options.html = None
 
 if options.output[-1] != "/":
-    optins.output += "/"
+    options.output += "/"
 
 if not isdir(options.output):
     print "Output directory doesn't exists"
