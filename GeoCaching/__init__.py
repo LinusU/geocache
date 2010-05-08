@@ -137,10 +137,13 @@ class GeoCaching:
     
     def search_lat_long(self, lat, long):
         
-        from Search import Search
+        from SearchParser import SearchParser
         
-        s = Search(self)
-        s.search_lat_long(lat, long)
+        s = SearchParser(self)
+        
+        s.parse_stream(self.login.urlopen(
+            "http://www.geocaching.com/seek/nearest.aspx?lat=%f&lng=%f" % (lat, long)
+        ))
         
         return s
         

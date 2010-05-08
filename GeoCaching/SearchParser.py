@@ -28,7 +28,7 @@ def month2int(month):
     elif month == "Nov": return 11
     elif month == "Dec": return 12
 
-class Search(HTMLParser):
+class SearchParser(HTMLParser):
     
     def __init__(self, login):
         
@@ -61,18 +61,14 @@ class Search(HTMLParser):
         }
         
     
-    def search_lat_long(self, lat, long):
+    def parse_stream(self, stream):
         
-        u = self.login.urlopen(
-            "http://www.geocaching.com/seek/nearest.aspx?lat=%f&lng=%f" % (lat, long)
-        )
-        
-        s = u.read(1024)
+        s = stream.read(1024)
         
         while len(s) > 0:
             try: self.feed(s)
             except HTMLParseError: pass
-            s = u.read(1024)
+            s = stream.read(1024)
         
         u.close()
         
