@@ -20,6 +20,7 @@ options, args = p.parse_args()
 if options.device is not None:
     options.output = "/media/%s/gpx/" % (options.device, )
     options.html = "/media/%s/gpx/html/" % (options.device, )
+    if not isdir(options.html): options.html = None
 
 if options.output[-1] != "/":
     optins.output += "/"
@@ -31,7 +32,7 @@ if not isdir(options.output):
 if options.html is not None:
     
     if options.html[-1] != "/":
-        optins.html += "/"
+        options.html += "/"
 
     if not isdir(options.html):
         print "HTML directory doesn't exists"
