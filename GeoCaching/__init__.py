@@ -4,6 +4,8 @@
 # © Linus Unnebäck
 #
 
+from DB4O import DB4O
+
 from cookielib import CookieJar
 from urllib import urlencode
 from urllib2 import Request, urlopen
@@ -45,7 +47,11 @@ class GeoCaching:
         
         u = self.urlopen(*args)
         
-        f = open(output, 'w')
+        if hasattr(output, "write"):
+            f = output
+        else:
+            f = open(output, 'w')
+        
         s = u.read(1024)
         
         while len(s) > 0:
@@ -82,10 +88,10 @@ class GeoCaching:
         return False
         
 
-    def fetch_loc(self, directory, gc):
+    def fetch_loc(self, fileobject, gc):
         
         self.urlfetch(
-            "%s%s.loc" % (directory, gc),
+            fileobject,
             "http://www.geocaching.com/seek/cache_details.aspx?wp=%s" % (gc, ),
             urlencode({
                 '__EVENTTARGET': '',
