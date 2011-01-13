@@ -70,7 +70,7 @@ class SearchParser(HTMLParser):
             except HTMLParseError: pass
             s = stream.read(1024)
         
-        u.close()
+        stream.close()
         
         try: self.close()
         except HTMLParseError: pass

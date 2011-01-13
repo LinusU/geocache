@@ -147,7 +147,7 @@ class GeoCaching:
         
         s = SearchParser(self)
         
-        s.parse_stream(self.login.urlopen(
+        s.parse_stream(self.urlopen(
             "http://www.geocaching.com/seek/nearest.aspx?lat=%f&lng=%f" % (lat, long)
         ))
         
