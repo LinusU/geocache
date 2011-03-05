@@ -11,12 +11,18 @@ from os.path import isdir
 
 p = OptionParser(version=0.2)
 
+p.add_option("-p", "--parse", dest="parse", help="Parse GCXXXX's from standard input", action="store_true", default=False)
 p.add_option("-d", "--device", dest="device", help="Use the device DEV and set directories accordingly", metavar="DEV", default=None)
 p.add_option("-o", "--output", dest="output", help="Fetch the caches to DIR", metavar="DIR", default="./")
 p.add_option("-i", "--html", dest="html", help="Fetch the caches info as html to DIR", metavar="DIR", default=None)
 p.add_option("-4", "--db4o", dest="db4o", help="Fetch the caches to a databse with the name DB", metavar="DB", default=None)
 
 options, args = p.parse_args()
+
+if options.parse:
+    from re import findall
+    from sys import stdin
+    args += findall("(GC[0-9A-Z]+)\\b", stdin.read())
 
 if options.device is not None:
     if options.db4o is None:
@@ -51,7 +57,8 @@ else:
 
 g = GeoCaching()
 
-for gc in args:
+while len(args) > 0:
+    gc = args.pop(0)
     
     if gc[:2] != "GC":
         continue
@@ -60,11 +67,12 @@ for gc in args:
         g.fetch_html(options.html, gc)
     
     if db is None:
-        f = open("%s%s.loc" % (options.output, gc))
+        f = open("%s%s.loc" % (options.output, gc), "w")
     else:
         f = db.create_loc(gc)
     
-    g.fetch_loc(f, gc)
+    try: g.fetch_loc(f, gc)
+    except: args.append(gc)
     
 
 if db is not None:
