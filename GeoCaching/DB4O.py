@@ -38,6 +38,7 @@ class DB4O:
         move("database.db4o", filename)
         
         for f in self.files:
-            remove(f)
+            try: remove(f)
+            except OSError: pass
         
     

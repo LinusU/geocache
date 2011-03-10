@@ -104,12 +104,13 @@ class GeoCaching:
         return True
         
     
-    def fetch_html(self, directory, gc):
+    def fetch_html(self, directory, gc, guid = None):
         
         from HTML import SCRIPTS, IMAGES, LINKS
         from HTML import script, image, link
         
-        guid = self.get_guid(gc)
+        if guid is None:
+            guid = self.get_guid(gc)
         
         if guid is False:
             return False
