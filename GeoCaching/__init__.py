@@ -9,18 +9,19 @@ from DB4O import DB4O
 from cookielib import CookieJar
 from urllib import urlencode
 from urllib2 import Request, urlopen
+from simplejson import load, loads
 
 class GeoCaching:
     
-    def __init__(self):
+    def __init__(self, username='SpaceStationOwner', password='921202lu'):
         
         self.jar = CookieJar()
         self.req = Request("http://www.geocaching.com/login/default.aspx?RESET=Y", urlencode({
             '__EVENTTARGET': '',
             '__EVENTARGUMENT': '',
             '__VIEWSTATE': '',
-            'ctl00$ContentBody$myUsername': 'SpaceStationOwner',
-            'ctl00$ContentBody$myPassword': '921202lu',
+            'ctl00$ContentBody$myUsername': username,
+            'ctl00$ContentBody$myPassword': password,
             'ctl00$ContentBody$cookie': '',
             'ctl00$ContentBody$Button1': 'Login'
         }))
@@ -153,5 +154,38 @@ class GeoCaching:
         ))
         
         return s
+        
+    
+    def fetch_window(self, lat1, lat2, lon1, lon2):
+        
+        if lat2 > lat1: lat1, lat2 = lat2, lat1
+        if lon2 > lon1: lon1, lon2 = lon2, lon1
+        
+        f = self.urlopen(
+            "http://www.geocaching.com/map/default.aspx/MapAction",
+            '{"dto":{"data":{"c":1,"m":"","d":"%.9f|%.9f|%.9f|%.9f"},"ut":""}}' % (lat1, lat2, lon1, lon2),
+            {
+                "Origin": "http://www.geocaching.com",
+                "Content-Type": "application/json"
+            }
+        )
+        
+        j = load(f)
+        j = loads(j["d"])
+        
+        ret = list()
+        
+        for obj in j["cs"]["cc"]:
+            ret.append({
+                "gc": obj["gc"],
+                "type": obj["ctid"],
+                "title": obj["nn"],
+                "lat": int(round(obj["lat"] * 1E6)),
+                "lon": int(round(obj["lon"] * 1E6)),
+                "found": obj["f"],
+                "disabled": not obj["ia"]
+            })
+        
+        return ret
         
     
